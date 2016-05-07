@@ -11,6 +11,8 @@ import LensModels
 import LensMapping
 import numpy
 from astropy.io import fits
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
 
 lens=LensModels.PowerLawLens(4) #lens a PowerLawLens with index n=4
 angle_x1comp_map=numpy.zeros([500,500]) # 500x500 array filled with zeros
@@ -20,6 +22,8 @@ for x1 in range (500):
         angle=lens.deflection_angle((x1-250)/500,(x2-250)/500) #angle is an array containing the two components of the deflection angle at the point (x1,x2)
         angle_x1comp_map[x1,x2]=angle[0] #filling the maps of the deflection angle
         angle_x2comp_map[x1,x2]=angle[1]
+        
+#WRITING MAPS TO FITS FILES
 
 hdu = fits.PrimaryHDU(angle_x1comp_map) #HDU means Header/Data Unit, the 'building blocks' of which fit files are made of. In this case, hdu is a pure data unit.
 hdu.writeto('data/angle_x1comp_map.fits') #the HDU hdu is written to the new fit file. A simple header is automatically attached to the file.
@@ -35,3 +39,17 @@ convergence=lens2.convergence_map()
 
 hdu = fits.PrimaryHDU(convergence) 
 hdu.writeto('data/convergence.fits') 
+
+#PLOTTING MAPS:
+
+plt.figure(1)
+angle_x1plot = plt.imshow(angle_x1comp_map, clim=(-500.0, 500.0))# clim means color limit, it's a parameter that defines the relation between  numerical values and color in the figure
+plt.colorbar()
+
+plt.figure(2)
+angle_x2plot = plt.imshow(angle_x2comp_map, clim=(-500.0, 500.0))
+plt.colorbar()
+
+plt.figure(3)
+convergence_plot = plt.imshow(convergence, clim=(-50.0, 10.0))
+plt.colorbar()
